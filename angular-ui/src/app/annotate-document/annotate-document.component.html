@@ -1,0 +1,32 @@
+<div class="row mt-2">
+    <h1 class="mb-5 display-4">Document Annotation</h1>
+</div>
+<div class="row">
+    <div class="col-3 border-right border-primary">
+        <div class="row" *ngFor="let question of questions; let i = index">
+            <button
+            type="button"
+            class="btn me-2 mb-2 p-2"
+            [style]="randomButtonStyles[i]['colorStyle']"
+            (click)="addAnnotation(question.text, randomButtonStyles[i]['color'])"
+            >
+                {{ question.text }}
+            </button>
+        </div>
+    </div>
+
+    <div class="col-9">
+        <ngx-annotate-text
+        [(annotations)]="annotations"
+        [removable]="true"
+        [text]="text"
+        annotationClass="my-annotation"
+        (clickAnnotation)="onClickAnnotation($event)"
+        (removeAnnotation)="onRemoveAnnotation($event)"
+        #annotateText
+        >
+        </ngx-annotate-text>
+    </div>
+
+    <button class="btn btn-primary col-1 mt-3" (click)="updateAnnotations()">Update</button>
+</div>

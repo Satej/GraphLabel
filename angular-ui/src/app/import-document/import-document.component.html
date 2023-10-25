@@ -1,0 +1,10 @@
+<div class="mb-3 mt-3">
+  <label for="formFile" class="form-label">Upload a text or csv document for annotation:</label>
+  <input class="form-control" (change)="onFileSelected($event)" accept=".txt" type="file" id="fileInput">
+  <button type="button" class="btn btn-primary mt-3" (click)="uploadFile()" [disabled]="!file || uploadProgress > 0">Upload</button>
+  <div *ngIf="uploadProgress > 0" class="progress mt-3">
+    <div class="progress-bar" role="progressbar" style="width: {{ uploadProgress }}%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+  </div>
+  <div *ngIf="uploadSuccess" class="alert alert-success alert-dismissible fade show mt-3" role="alert">File Uploaded Successfully</div>
+  <div *ngIf="uploadError" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">File Upload Failed</div>  
+</div>  

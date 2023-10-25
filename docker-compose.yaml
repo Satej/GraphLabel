@@ -1,0 +1,77 @@
+version: '3'
+services:
+  neo4j:
+    image: neo4j #:enterprise  # Replace with your desired Neo4j Enterprise version
+    container_name: neo4j
+    ports:
+      - "7474:7474"  # HTTP port
+      - "7687:7687"  # Bolt protocol port
+    environment:
+      #- NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_AUTH=neo4j/your_password  # Change 'your_password' to your desired password
+    volumes:
+      - neo4j-data:/data
+  
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ACCESS_KEY: your_access_key  # Replace with your own access key
+      MINIO_SECRET_KEY: your_secret_key  # Replace with your own secret key
+    volumes:
+      - minio-data:/data  # Local directory to store Minio data
+    command: server /data --console-address :9001
+
+  postgres-db:
+    image: postgres:latest
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: your_username
+      POSTGRES_PASSWORD: your_password
+      POSTGRES_DB: your_database_name
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  api:
+    build:
+      context: ./api  # Replace with the path to your FastAPI app code
+      dockerfile: Dockerfile
+    container_name: api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres-db
+      - minio
+      - neo4j
+      #- angular-ui
+    volumes:
+      - ./nltk_data:/usr/local/nltk_data
+    environment:
+      DATABASE_URL: postgresql+psycopg2://your_username:your_password@postgres-db:5432/your_database_name
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+
+
+  angular-ui:
+    build:
+      context: ./angular-ui  # Replace with the path to your Angular app code
+      dockerfile: Dockerfile
+    container_name: angular-ui
+    ports:
+      - "4200:80"
+
+  adminer:
+    image: adminer
+    container_name: adminer_container
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres-data:
+  neo4j-data:
+  minio-data:

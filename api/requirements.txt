@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+minio
+python-multipart
+sqlalchemy
+psycopg2-binary
+nltk
+pydantic
+neo4j
+spacy
+crosslingual_coreference
